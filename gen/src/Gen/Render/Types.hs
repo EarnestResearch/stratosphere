@@ -28,7 +28,7 @@ data Module
   , moduleFieldPrefix :: Text
   , modulePath :: Text
     -- ^ The prefix for the stratosphere sub-module
-  , moduleDocumentation :: Text
+  , moduleDocumentation :: Maybe Text
     -- ^ The documentation link
   , moduleProperties :: [Property]
   }
@@ -67,7 +67,7 @@ moduleFromResourceType (ResourceType fullName doc props) =
   (computeLensPrefix fullName)
   (computeFieldPrefix fullName)
   "Stratosphere.Resources"
-  doc
+  (Just doc)
   props
 
 -- | We give slightly different names to properties than AWS does. AWS uses a

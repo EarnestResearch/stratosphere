@@ -54,7 +54,7 @@ renderModule module'@Module {..} = do
 {-# LANGUAGE StrictData #-}
 {-# LANGUAGE TupleSections #-}
 
-#{renderDocstring moduleDocumentation}
+#{maybe "" renderDocstring moduleDocumentation}
 
 module #{modulePath}.#{moduleName} where
 

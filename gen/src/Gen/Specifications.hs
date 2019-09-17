@@ -80,17 +80,19 @@ fixSpecBugs spec =
   & propertyTypesLens
   . ix "AWS::ECS::TaskDefinition.ContainerDefinition"
   . propertyPropsLens
+  . _Just
   . at "Image"
   %~ (\(Just rawProp) -> Just rawProp { rawPropertyRequired = True })
   & propertyTypesLens
   . ix "AWS::ECS::TaskDefinition.ContainerDefinition"
   . propertyPropsLens
+  . _Just
   . at "Name"
   %~ (\(Just rawProp) -> Just rawProp { rawPropertyRequired = True })
   where
     propertyTypesLens :: Lens' RawCloudFormationSpec (Map Text RawPropertyType)
     propertyTypesLens = lens rawCloudFormationSpecPropertyTypes (\s a -> s { rawCloudFormationSpecPropertyTypes = a })
-    propertyPropsLens :: Lens' RawPropertyType (Map Text RawProperty)
+    propertyPropsLens :: Lens' RawPropertyType (Maybe (Map Text RawProperty))
     propertyPropsLens = lens rawPropertyTypeProperties (\s a -> s { rawPropertyTypeProperties = a })
     -- resourceTypesLens :: Lens' RawCloudFormationSpec (Map Text RawResourceType)
     -- resourceTypesLens = lens rawCloudFormationSpecResourceTypes (\s a -> s { rawCloudFormationSpecResourceTypes = a })
@@ -100,14 +102,14 @@ fixSpecBugs spec =
 data PropertyType
   = PropertyType
   { propertyTypeName :: Text
-  , propertyTypeDocumentation :: Text
+  , propertyTypeDocumentation :: Maybe Text
   , propertyTypeProperties :: [Property]
   }
   deriving (Show, Eq)
 
 propertyTypeFromRaw :: Text -> RawPropertyType -> PropertyType
 propertyTypeFromRaw fullName (RawPropertyType doc props) =
-  PropertyType fullName doc (uncurry (propertyFromRaw fullName) <$> sortOn fst (toList props))
+  PropertyType fullName doc (uncurry (propertyFromRaw fullName) <$> sortOn fst (maybe [] toList props))
 
 data Property
   = Property
